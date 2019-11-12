@@ -18,7 +18,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameThread gameThread;
 
-    private Grid2DSprite gameOver;
+    private Sprite gameOver;
     private SnakeSprite snakePlayer;
     public Grid2DSprite grid2DSprite;
 
@@ -114,7 +114,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         Bitmap scaledImage = Bitmap.createScaledBitmap(squareBitmap,50,50,false);
 //        gameOverBitmap = Bitmap.createScaledBitmap(gameOverBitmap,screenWidth,screenHeight,false);
         this.grid2DSprite = new Grid2DSprite(this,squareBitmap,this.screenWidth,screenHeight,10,10);
-        this.gameOver = new Grid2DSprite(this,gameOverBitmap,this.screenWidth,screenHeight,1,1);
+        this.gameOver = new Sprite(this,gameOverBitmap,0,0);
         this.snakePlayer = new SnakeSprite(this,scaledImage,screenWidth/2,screenHeight/2);
         this.gameThread = new GameThread(this,holder);
         this.gameThread.setRunning(true);
