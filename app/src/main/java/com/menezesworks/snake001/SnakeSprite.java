@@ -4,6 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Stack;
+
 public class SnakeSprite extends GameObject {
 
 
@@ -147,18 +153,13 @@ public class SnakeSprite extends GameObject {
         int lastx,lasty;
         lastx = snakePositions[0].x;
         lasty = snakePositions[0].y;
-        for(int i=1;i<count-1;i++){
-            lastx = snakePositions[i-1].x;
-            lasty = snakePositions[i-1].y;
-            snakePositions[i+1].x = snakePositions[i].x;
-            snakePositions[i+1].y = snakePositions[i].y;
-            snakePositions[i].x = lastx;
-            snakePositions[i].y = lasty;
+        Point2D temp = snakePositions[count-1];
 
-
-
-
+        for (int i = (count-1 - 1); i >= 0; i--) {
+            snakePositions[i+1] = snakePositions[i];
         }
+
+        snakePositions[0] = temp;
 
     }
     public void move() {
