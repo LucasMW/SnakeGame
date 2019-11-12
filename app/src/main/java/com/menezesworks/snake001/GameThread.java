@@ -46,7 +46,7 @@ public class GameThread extends Thread {
             // (Change nanoseconds to milliseconds)
             long waitTime = (now - startTime)/1000000;
             if(waitTime < 10)  {
-                waitTime= 1000/10; // 10 Frames Per Second.
+                waitTime= 1000/30; // Frames Per Second.
             }
             System.out.print(" Wait Time="+ waitTime);
 

@@ -21,6 +21,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     private Sprite gameOver;
     private SnakeSprite snakePlayer;
     public Grid2DSprite grid2DSprite;
+    private MainActivity ref;
+
+    public void setActivity(MainActivity ref) {
+        this.ref = ref;
+    }
 
     public int screenWidth,screenHeight;
 
@@ -49,8 +54,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void notifyStop() {
-
         this.gameThread.setRunning(false);
+        //this.ref.finish();
+
     }
     @Override
     public void draw(Canvas canvas)  {
@@ -67,40 +73,40 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     public boolean onTouchEvent(MotionEvent motionEvent) {
             float x2,y2;
             float MIN_DISTANCE = 150;
-            switch(motionEvent.getAction())
-            {
-                case MotionEvent.ACTION_DOWN:
-                    x1 = motionEvent.getX();
-                    y1 = motionEvent.getY();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    x2 = motionEvent.getX();
-                    y2 = motionEvent.getY();
-                    float deltaX = x2 - x1;
-                    float deltaY = y2-y1;
-                    System.out.println("DeltaX "+ deltaX + " DeltaY "+deltaY);
-                    if(deltaX > MIN_DISTANCE || deltaY > MIN_DISTANCE) {
-                        if (deltaX > deltaY) {
-                            if(deltaX > 0){
-                                snakePlayer.sendCommand(SnakeSprite.CMDs.goRight);
-                            } else {
-                                snakePlayer.sendCommand(SnakeSprite.CMDs.goLeft);
-                            }
-                        } else {
-                            if(deltaY > 0){
-                                snakePlayer.sendCommand(SnakeSprite.CMDs.goUP);
-                            } else {
-                                snakePlayer.sendCommand(SnakeSprite.CMDs.goDown);
-                            }
-                        }
-                    }
-                    else
-                    {
+//            switch(motionEvent.getAction())
+//            {
+//                case MotionEvent.ACTION_DOWN:
+//                    x1 = motionEvent.getX();
+//                    y1 = motionEvent.getY();
+//                    break;
+//                case MotionEvent.ACTION_UP:
+//                    x2 = motionEvent.getX();
+//                    y2 = motionEvent.getY();
+//                    float deltaX = x2 - x1;
+//                    float deltaY = y2-y1;
+//                    System.out.println("DeltaX "+ deltaX + " DeltaY "+deltaY);
+//                    if(deltaX > MIN_DISTANCE || deltaY > MIN_DISTANCE) {
+//                        if (deltaX > deltaY) {
+//                            if(deltaX > 0){
+//                                snakePlayer.sendCommand(SnakeSprite.CMDs.goRight);
+//                            } else {
+//                                snakePlayer.sendCommand(SnakeSprite.CMDs.goLeft);
+//                            }
+//                        } else {
+//                            if(deltaY > 0){
+//                                snakePlayer.sendCommand(SnakeSprite.CMDs.goUP);
+//                            } else {
+//                                snakePlayer.sendCommand(SnakeSprite.CMDs.goDown);
+//                            }
+//                        }
+//                    }
+//                    else
+//                    {
                         System.out.println("Please turn");
                         snakePlayer.sendCommand(SnakeSprite.CMDs.turn);
-                    }
-                    break;
-            }
+//                    }
+//                    break;
+//            }
             return true;
     }
 
@@ -113,7 +119,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         Bitmap gameOverBitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.gameover);
         Bitmap scaledImage = Bitmap.createScaledBitmap(squareBitmap,50,50,false);
 //        gameOverBitmap = Bitmap.createScaledBitmap(gameOverBitmap,screenWidth,screenHeight,false);
-        this.grid2DSprite = new Grid2DSprite(this,squareBitmap,this.screenWidth,screenHeight,10,10);
+        this.grid2DSprite = new Grid2DSprite(this,squareBitmap,this.screenWidth,screenHeight,30,30);
         this.gameOver = new Sprite(this,gameOverBitmap,0,0);
         this.snakePlayer = new SnakeSprite(this,scaledImage,screenWidth/2,screenHeight/2);
         this.gameThread = new GameThread(this,holder);

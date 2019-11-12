@@ -20,7 +20,7 @@ class Grid2DSprite extends GameObject {
     public void draw(Canvas canvas)  {
         for(Point2D tile : aux.getAllTiles() ){
             canvas.drawBitmap(this.image,tile.x, tile.y, null);
-            System.out.printf("tile(%d,%d)\n",tile.x,tile.y);
+            //System.out.printf("tile(%d,%d)\n",tile.x,tile.y);
         }
 
     }

@@ -6,13 +6,7 @@ import android.graphics.Paint;
 
 public class SnakeSprite extends GameObject {
 
-    private static final int ROW_TOP_TO_BOTTOM = 0;
-    private static final int ROW_RIGHT_TO_LEFT = 1;
-    private static final int ROW_LEFT_TO_RIGHT = 2;
-    private static final int ROW_BOTTOM_TO_TOP = 3;
 
-    // Row index of Image are being used.
-    private int rowUsing = ROW_LEFT_TO_RIGHT;
 
     private int colUsing;
     private Grid2d gridRef;
@@ -83,11 +77,14 @@ public class SnakeSprite extends GameObject {
 
     private int numberOfSquares = 1;
 
+    private final int numberOfUpdatesToMove = 3;
+    private  int currentNumberOfUpdates = 0;
     private long lastDrawNanoTime =-1;
     private long squarePlusInterval = 100;
 
     private GameSurface gameSurface;
     private Directions direction = Directions.RIGHT;
+
 
     public SnakeSprite(GameSurface gameSurface, Bitmap image, int x, int y) {
 
@@ -99,9 +96,9 @@ public class SnakeSprite extends GameObject {
             this.snakePositions[i] = new Point2D(0,0);
         }
         this.gridRef = this.gameSurface.grid2DSprite.getGrid();
-        snakePositions[0].x = x;
-        snakePositions[0].y = y;
-        count = 10;
+       int len = gridRef.getAllTiles().length;
+       snakePositions[0]  = new Point2D(gridRef.getRows()/2,gridRef.getCols()/2);
+
     }
 
     public Bitmap[] getMoveBitmaps()  {
@@ -130,37 +127,48 @@ public class SnakeSprite extends GameObject {
 
     public boolean checkGameOver() {
 
+        int row = snakePositions[0].x;
+        int col = snakePositions[0].y;
+        System.out.printf("row and col(%d,%d)\n",row,col);
         if(row < 0 ||
                 row > this.gridRef.getRows()-1 ||
                 col < 0 ||
         col > this.gridRef.getCols()-1){
+            System.out.println("GAME OVER");
             return  true;
+
         }
-        System.out.println("GAME OVER");
         return  false;
+
     }
 
     public void moveBody(){
-        for(int i=1;i<count;i++){
-            snakePositions[i].x += getVelocityVector().x;
-            snakePositions[i].y += getVelocityVector().y;
+        Point2D v = getVelocityVector();
+        int lastx,lasty;
+        lastx = snakePositions[0].x;
+        lasty = snakePositions[0].y;
+        for(int i=1;i<count-1;i++){
+            lastx = snakePositions[i-1].x;
+            lasty = snakePositions[i-1].y;
+            snakePositions[i+1].x = snakePositions[i].x;
+            snakePositions[i+1].y = snakePositions[i].y;
+            snakePositions[i].x = lastx;
+            snakePositions[i].y = lasty;
+
+
+
 
         }
 
     }
     public void move() {
-        long now = System.nanoTime();
-
-        // Never once did draw.
-        if(lastDrawNanoTime==-1) {
-            lastDrawNanoTime= now;
-        }
         Point2D v = getVelocityVector();
-        this.row += v.x;
-        this.col += v.y;
-        Point2D p = gridRef.getPositionOfTile(this.row,this.col);
-        this.x = p.x;
-        this.y = p.y;
+        int r = snakePositions[0].x + v.x;
+        int c = snakePositions[0].y + v.y;
+        snakePositions[0].x = r;
+        snakePositions[0].y = c;
+        System.out.printf("receiving (%d,%d)\n",v.x ,v.y);
+        System.out.printf("moved to (%d,%d)",snakePositions[0].x ,snakePositions[0].y);
         moveBody();
 
 
@@ -171,11 +179,19 @@ public class SnakeSprite extends GameObject {
         count++;
 
     }
+
     public void update()  {
 
         // Current time in nanoseconds
+        if(currentNumberOfUpdates % numberOfUpdatesToMove == 0){
+            move();
+        }
+        if(currentNumberOfUpdates % 100 == 0){
+            increaseSnake();
+        }
 
-        move();
+        currentNumberOfUpdates++;
+
         if(checkGameOver()){
             this.gameSurface.notifyStop();
         }
@@ -185,9 +201,8 @@ public class SnakeSprite extends GameObject {
     public void draw(Canvas canvas)  {
 
         Bitmap bitmap = this.getCurrentMoveBitmap();
-        canvas.drawBitmap(bitmap,x, y, null);
-        for(int i=1;i<count;i++){
-            Point2D p = gridRef.getPositionOfTile(this.row,this.col);
+        for(int i=0;i<count;i++){
+            Point2D p = gridRef.getPositionOfTile(snakePositions[i].x,snakePositions[i].y);
             canvas.drawBitmap(bitmap,p.x, p.y, null);
             System.out.println("drawing x " + snakePositions[i].x + " y: " + snakePositions[i].y);
 
